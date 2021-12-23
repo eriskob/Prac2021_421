@@ -1,8 +1,8 @@
-CC=g++ -std=c++1z
+CC=g++ -std=c++14
 all: final clean
 
 final: graphs.o factory.o main.o
-	$(CC) -o graphs.o factory.o main.o
+	$(CC) -o graphs.o factory.o main.o -v
 
 main.o:
 	$(CC) -c main.cpp

@@ -1,6 +1,5 @@
 #include <iostream>
 #include "factory.h"
-#include "graphs.h"
 
 int main(int argc, char **argv){
     std::vector<char> p1 {'A','B','C','D'};
