@@ -1,10 +1,10 @@
-CC=g++ -std=c++14
+CC=g++ -std=c++20
 all: final clean
 
 final: graphs.o factory.o main.o
 	$(CC) -o graphs.o factory.o main.o -v
 
-main.o:
+main.o: factory.h
 	$(CC) -c main.cpp
 
 factory.o: factory.cpp factory.h

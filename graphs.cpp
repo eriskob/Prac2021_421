@@ -103,16 +103,16 @@ const std::string weighted_graph::ToString() const{
     }
 
 std::unique_ptr<TGraph> weighted_graph::AsWeighted(int default_weight) const{
-        std::vector<std::string> edg;
-        for(auto i: this->edges){
-            std::stringstream ss;
-            ss << i.first << i.second;
-            edg.push_back(ss.str());
-        }
-        return std::make_unique<weighted_graph>(edg, weights);
+    std::vector<std::string> edg;
+    for(auto i: this->edges){
+        std::stringstream ss;
+        ss << i.first << i.second;
+        edg.push_back(ss.str());
     }
+    return std::make_unique<weighted_graph>(edg, weights);
+}
 
-weighted_graph & operator+=(weighted_graph &first, weighted_graph &second){
+weighted_graph operator+=(weighted_graph &first, weighted_graph &second){
     // weighted_graph tmp(first);
     // return (tmp = first + second);
     auto second_eds = second.GetEdges();

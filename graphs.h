@@ -57,26 +57,18 @@ public:
     weighted_graph(std::unique_ptr<weighted_args> && args);
     weighted_graph(std::vector<std::string> edg, std::vector<int> wgt);
     weighted_graph(const weighted_graph &copy);
-    ~weighted_graph(){};
+    ~weighted_graph(){}
     const std::vector<char> GetVertices() const;
     const std::vector<std::pair<char, char>> GetEdges() const;
     const std::vector<int> GetWeights() const;
     const std::string ToString() const;
     std::unique_ptr<TGraph> AsWeighted(int default_weight) const;
-    // friend weighted_graph operator=(weighted_graph &first, weighted_graph &second);
-    friend weighted_graph & operator+=(weighted_graph &first, weighted_graph &second);
+    friend weighted_graph operator+=(weighted_graph &first, weighted_graph &second);
     friend weighted_graph operator+(weighted_graph &first, weighted_graph &second);
     friend weighted_graph operator+(weighted_graph &first, TGraph &second);
     friend weighted_graph operator-=(weighted_graph &first, weighted_graph &second);
     friend weighted_graph operator-(weighted_graph &first, TGraph &second);
 };
-
-// weighted_graph operator=(weighted_graph &first, weighted_graph &second){
-//     first.edges = second.edges;
-//     first.vertices = second.vertices;
-//     first.weights = second.weights;
-//     return first;
-// }
 
 class simple_graph: public TGraph{
     std::vector<char> vertices;
@@ -86,7 +78,7 @@ public:
     simple_graph(std::unique_ptr<simple_args> && args);
     simple_graph(std::vector<std::string> edg);
     simple_graph(const simple_graph &copy);
-    ~simple_graph(){};
+    ~simple_graph(){}
     const std::vector<char> GetVertices() const;
     const std::vector<std::pair<char, char>> GetEdges() const;
     const std::string ToString() const;
@@ -106,7 +98,7 @@ public:
     bipartite_graph(std::unique_ptr<bipartite_args> && args);
     bipartite_graph(std::vector<char> p1, std::vector<char> p2);
     bipartite_graph(const bipartite_graph &copy);
-    ~bipartite_graph(){};
+    ~bipartite_graph(){}
     const std::vector<char> GetVertices() const;
     const std::vector<char> GetPart1() const;
     const std::vector<char> GetPart2() const;
@@ -130,7 +122,7 @@ public:
     complete_graph(std::unique_ptr<complete_args> && args);
     complete_graph(std::vector<char> verts);
     complete_graph(const complete_graph &copy);
-    ~complete_graph(){};
+    ~complete_graph(){}
     const std::vector<char> GetVertices() const;
     const std::vector<std::pair<char, char>> GetEdges() const;
     const std::string ToString() const;
