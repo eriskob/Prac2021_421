@@ -147,8 +147,8 @@ TEST_F(test_bipartite, arithmetic_operations){
     auto complete2 = dynamic_cast<complete_graph*>(complete.get());
     auto weight2 = dynamic_cast<weighted_graph*>(weighted.get());
     auto simple2 = dynamic_cast<simple_graph*>(simple.get());
-    ASSERT_EQ("SimpleGraph {AK, AF, BK, BF, MK, MF, AB, AM, AN, AD, BM, BN, BD, MN, MD, ND}", (*b6 + *complete2).ToString());
-    ASSERT_EQ("SimpleGraph {AD, AE, BD, BE, CD, CE, MD, ME, EF, FA, AB, EC}", (*b4 + *simple2).ToString());
+    ASSERT_EQ("SimpleGraph {AK, AF, BK, BF, MK, MF, BA, MA, NA, DA, MB, NB, DB, NM, DM, DN}", (*b6 + *complete2).ToString());
+    ASSERT_EQ("SimpleGraph {AD, AE, BD, BE, CD, CE, MD, ME, FE, AF, BA}", (*b4 + *simple2).ToString());
     ASSERT_THROW(*b5 + *b6, std::logic_error);
     ASSERT_THROW(*b5 + *weight2, std::logic_error);
     ASSERT_EQ("BipartiteGraph {{A, B, C, M, K, N}, {D, E, F}}", (*b4 + *b5).ToString());
@@ -182,8 +182,8 @@ TEST_F(test_complete, arithmetic_operations){
     auto s = dynamic_cast<simple_graph*>(simple.get());
     auto w = dynamic_cast<weighted_graph*>(weighted.get());
     ASSERT_EQ("CompleteGraph {A, B, M, N, D, F}", (*c1 + *c2).ToString());
-    ASSERT_EQ("SimpleGraph {AB, AM, AN, AD, BM, BN, BD, MN, MD, ND, AD, AE, BD, BE, CD, CE, ND, NE}", (*c1 + *b).ToString());
-    ASSERT_EQ("SimpleGraph {AN, AF, NF, EF, FA, AB, EC}", (*c2 + *s).ToString());
+    ASSERT_EQ("SimpleGraph {AB, AM, AN, AD, BM, BN, BD, MN, MD, ND, AE, BE, CD, CE, NE}", (*c1 + *b).ToString());
+    ASSERT_EQ("SimpleGraph {AN, AF, NF, EF, AB, EC}", (*c2 + *s).ToString());
     ASSERT_THROW(*c2 + *w, std::logic_error);
     *c1 += *c2;
     ASSERT_EQ("CompleteGraph {A, B, M, N, D, F}", c1->ToString());
@@ -221,8 +221,8 @@ TEST_F(test_simple, arithmetic_operations){
     *s2 += *s1;
     ASSERT_EQ("SimpleGraph {EF, FC, AE, FA, AB, EC}", s2->ToString());
     ASSERT_EQ("SimpleGraph {}", (*s1 - *s2).ToString());
-    ASSERT_EQ("SimpleGraph {EF, FC, FA, AB, EC}", (*s2 - *b).ToString());
-    ASSERT_EQ("SimpleGraph {EF, FA, AB, EC}", (*s1 - *c).ToString());
+    ASSERT_EQ("SimpleGraph {EF, FC, FA, AB}", (*s2 - *b).ToString());
+    ASSERT_EQ("SimpleGraph {EF, AB, EC}", (*s1 - *c).ToString());
     ASSERT_EQ("SimpleGraph {EF, FA, EC}", (*s1 - *w).ToString());
     *s1 -= *s2;
     ASSERT_EQ("SimpleGraph {}", s1->ToString());
