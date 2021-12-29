@@ -90,7 +90,7 @@ const std::vector<int> weighted_graph::GetWeights() const{
 const std::string weighted_graph::ToString() const{
         std::stringstream ss;
         ss << "WeightedGraph {";
-        for(int i = 0; i < edges.size(); i++){
+        for(int i = 0; i < edges.size(); ++i){
             ss << edges[i].first << edges[i].second;
             ss << ":";
             ss << weights[i];
@@ -130,8 +130,8 @@ weighted_graph operator+=(weighted_graph &first, weighted_graph &second){
 }
 
 weighted_graph operator+(weighted_graph &first, weighted_graph &second){
-    weighted_graph another = weighted_graph(first);
-    return another += second;
+    weighted_graph tmp = weighted_graph(first);
+    return tmp += second;
     // weighted_graph tmp(first);
     // for(int i = 0; i < second.GetEdges().size(); i++){
     //     if(std::find(first.edges.begin(), first.edges.end(), second.GetEdges()[i]) == first.edges.end() && std::find(first.edges.begin(), first.edges.end(), std::make_pair(second.GetEdges()[i].second, second.GetEdges()[i].first)) == first.edges.end()){
@@ -146,8 +146,13 @@ weighted_graph operator+(weighted_graph &first, TGraph &second){
     throw std::logic_error("diff graphs");
 }
 
+weighted_graph operator+=(weighted_graph &first, TGraph &second){
+    throw std::logic_error("diff graphs");
+}
+
 weighted_graph operator-=(weighted_graph &first, weighted_graph &second){
-    for(auto i: second.GetEdges()){
+    auto second_eds = second.GetEdges();
+    for(auto i: second_eds){
         auto place = std::find(first.edges.begin(), first.edges.end(), i);
         if(place != first.edges.end()){
             first.edges.erase(place);
@@ -165,33 +170,35 @@ weighted_graph operator-=(weighted_graph &first, weighted_graph &second){
 }
 
 weighted_graph operator-(weighted_graph &first, TGraph &second){
-    auto f_edgs = first.GetEdges();
-    auto f_wghts = first.GetWeights();
-    for(auto i: second.GetEdges()) {
-        auto place = std::find(first.GetEdges().begin(), first.GetEdges().end(), i);
-        if(place != first.GetEdges().end()){
-            f_edgs.erase(place);
-            int index = place - first.GetEdges().begin();
-            f_wghts.erase(first.GetWeights().begin() + index);
+    auto second_edg = second.GetEdges();
+    auto first_edg = first.GetEdges();
+    auto first_weights = first.GetWeights();
+    for(auto i: second_edg){
+        auto place = std::find(first_edg.begin(), first_edg.end(), i);
+        if(place != first_edg.end()){
+            first_edg.erase(place);
+            int index = place - first_edg.begin();
+            first_weights.erase(first_weights.begin() + index);
         }
-        place = std::find(first.GetEdges().begin(), first.GetEdges().end(), std::make_pair(i.second, i.first));
-        if(place != first.GetEdges().end()){
-            f_edgs.erase(place);
-            int index = place - first.GetEdges().begin();
-            f_wghts.erase(first.GetWeights().begin() + index);
+        place = std::find(first_edg.begin(), first_edg.end(), std::make_pair(i.second, i.first));
+        if(place != first_edg.end()){
+            first_edg.erase(place);
+            int index = place - first_edg.begin();
+            first_weights.erase(first_weights.begin() + index);
         }
     }
     std::vector<std::string> new_edges;
-    for(auto i: first.GetEdges()){
+    for(auto i: first_edg){
         std::stringstream ss;
         ss << i.first << i.second;
         new_edges.push_back(ss.str());
     }
-    return weighted_graph(new_edges, first.GetWeights());
+    return weighted_graph(new_edges, first_weights);
 }
 
 simple_graph::simple_graph(std::unique_ptr<simple_args> && args){
-        for(auto i: args->edges){
+    auto edgs = args->edges;
+        for(auto i: edgs){
             edges.push_back(std::make_pair(i[0], i[1]));
             if(std::find(vertices.begin(), vertices.end(), i[0]) == vertices.end()){
                 vertices.push_back(i[0]);
@@ -237,7 +244,7 @@ const std::vector<std::pair<char, char>> simple_graph::GetEdges() const{
 const std::string simple_graph::ToString() const{
         std::stringstream ss;
         ss << "SimpleGraph {";
-        for(auto &i: edges){
+        for(auto i: edges){
             ss << i.first << i.second;
             if(i != *(edges.end() - 1)){
                 ss << ", ";
@@ -279,16 +286,15 @@ simple_graph operator+(simple_graph &first, weighted_graph &second){
 }
 
 simple_graph operator-=(simple_graph &first, TGraph &second){
-    auto second_edg = second.GetEdges();
     for(auto i: second.GetEdges()){
         auto place = std::find(first.edges.begin(), first.edges.end(), i);
         if(place != first.edges.end()){
             first.edges.erase(place);
         }
-        place = std::find(first.edges.begin(), first.edges.end(), std::make_pair(i.second, i.first));
-        if(place != first.edges.end()){
-            first.edges.erase(place);
-        }
+        // place = std::find(first.edges.begin(), first.edges.end(), std::make_pair(i.second, i.first));
+        // if(place != first.edges.end()){
+        //     first.edges.erase(place);
+        // }
     }
     return first;
 }
@@ -415,23 +421,29 @@ bipartite_graph operator+(bipartite_graph &first, weighted_graph &second){
 simple_graph operator+(bipartite_graph &first, TGraph &second){
     std::vector<std::string> edges;
     for(auto i: first.GetEdges()){
-        std::stringstream ss;
-        std::string straight, reverse;
-        ss << i.first << i.second << " " << i.second << i.first;
-        ss >> straight >> reverse;
-        if(std::find(edges.begin(), edges.end(), straight) == edges.end() && std::find(edges.begin(), edges.end(), reverse) == edges.end()){
-            edges.push_back(straight);
+        std::stringstream straight, reverse;
+        straight << i.first << i.second;
+        reverse << i.second << i.first;
+        if(std::find(edges.begin(), edges.end(), straight.str()) == edges.end() && std::find(edges.begin(), edges.end(), reverse.str()) == edges.end()){
+            edges.push_back(straight.str());
         }
     }
+    // for(auto i: second.GetEdges()){
+    //     std::cout << i.first << i.second << std::endl;
+    // }
+    
     for(auto i: second.GetEdges()){
-        std::stringstream ss;
-        std::string straight, reverse;
-        ss << i.first << i.second << " " << i.second << i.first;
-        ss >> straight >> reverse;
-        if(std::find(edges.begin(), edges.end(), straight) == edges.end() && std::find(edges.begin(), edges.end(), reverse) == edges.end()){
-            edges.push_back(straight);
+        // std::cout << "!" << std::endl;
+        std::stringstream straight, reverse;
+        straight << i.first << i.second;
+        reverse << i.second << i.first;
+        if(std::find(edges.begin(), edges.end(), straight.str()) == edges.end() || std::find(edges.begin(), edges.end(), reverse.str()) == edges.end()){
+            edges.push_back(straight.str());
         }
     }
+    // for(auto i: edges){
+    //     std::cout << i << std::endl;
+    // }
     return simple_graph(edges);
 }
 
@@ -459,12 +471,12 @@ bipartite_graph operator-(bipartite_graph &first, bipartite_graph &second){
 simple_graph operator-(bipartite_graph &first, TGraph &second){
     auto f_edgs = first.GetEdges();
     for(auto i: second.GetEdges()){
-        auto place = std::find(first.GetEdges().begin(), first.GetEdges().end(), i);
-        if(place != first.GetEdges().end()){
+        auto place = std::find(f_edgs.begin(), f_edgs.end(), i);
+        if(place != f_edgs.end()){
             f_edgs.erase(place);
         }
-        place = std::find(first.GetEdges().begin(), first.GetEdges().end(), std::make_pair(i.second, i.first));
-        if(place != first.GetEdges().end()){
+        place = std::find(f_edgs.begin(), f_edgs.end(), std::make_pair(i.second, i.first));
+        if(place != f_edgs.end()){
             f_edgs.erase(place);
         }
     }
@@ -564,7 +576,7 @@ simple_graph operator+(complete_graph &first, TGraph &second){
         std::string straight, reverse;
         ss << i.first << i.second << " " << i.second << i.first;
         ss >> straight >> reverse;
-        if(std::find(edges.begin(), edges.end(), straight) == edges.end() && std::find(edges.begin(), edges.end(), reverse) == edges.end()){
+        if(std::find(edges.begin(), edges.end(), straight) == edges.end() || std::find(edges.begin(), edges.end(), reverse) == edges.end()){
             edges.push_back(straight);
         }
     }
@@ -593,12 +605,12 @@ complete_graph operator-(complete_graph &first, complete_graph &second){
 simple_graph operator-(complete_graph &first, TGraph &second){
     auto f_edgs = first.GetEdges();
     for(auto i: second.GetEdges()){
-        auto place = std::find(first.GetEdges().begin(), first.GetEdges().end(), i);
-        if(place != first.GetEdges().end()){
+        auto place = std::find(f_edgs.begin(), f_edgs.end(), i);
+        if(place != f_edgs.end()){
             f_edgs.erase(place);
         }
-        place = std::find(first.GetEdges().begin(), first.GetEdges().end(), std::make_pair(i.second, i.first));
-        if(place != first.GetEdges().end()){
+        place = std::find(f_edgs.begin(), f_edgs.end(), std::make_pair(i.second, i.first));
+        if(place != f_edgs.end()){
             f_edgs.erase(place);
         }
     }

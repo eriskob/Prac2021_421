@@ -1,3 +1,6 @@
+#ifndef GRAPHS_H
+#define GRAPHS_H
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -16,7 +19,6 @@ class bipartite_args: public arguments{
 public:    
     std::vector<char> part1;
     std::vector<char> part2;
-    //~bipartite_args(){}
     bipartite_args(std::vector<char> p1, std::vector<char> p2);
 };
 
@@ -66,6 +68,7 @@ public:
     friend weighted_graph operator+=(weighted_graph &first, weighted_graph &second);
     friend weighted_graph operator+(weighted_graph &first, weighted_graph &second);
     friend weighted_graph operator+(weighted_graph &first, TGraph &second);
+    friend weighted_graph operator+=(weighted_graph &first, TGraph &second);
     friend weighted_graph operator-=(weighted_graph &first, weighted_graph &second);
     friend weighted_graph operator-(weighted_graph &first, TGraph &second);
 };
@@ -135,3 +138,5 @@ public:
     friend complete_graph operator-(complete_graph &first, complete_graph &second);
     friend simple_graph operator-(complete_graph &first, TGraph &second);
 };
+
+#endif

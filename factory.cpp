@@ -1,5 +1,5 @@
-#include <iostream>
 #include <typeinfo>
+#include <stdexcept>
 #include "factory.h"
 
 class TFactory::TImpl{
@@ -39,7 +39,7 @@ public:
         RegisterCreator<simple_graph>("simple");
         RegisterCreator<weighted_graph>("weighted");
     }
-    std::unique_ptr<TGraph> CreateObject(const std::string& type, std::unique_ptr<arguments>&& args) const{
+    std::unique_ptr<TGraph> Create(const std::string& type, std::unique_ptr<arguments>&& args) const{
         auto creator = RegisteredCreators.find(type);
         if (creator == RegisteredCreators.end()){
             throw std::invalid_argument("wrong args");
@@ -56,10 +56,10 @@ public:
     // }
 };
 
-TFactory::TFactory() : Impl(std::make_unique<TFactory::TImpl>()){}
+TFactory::TFactory(): Impl(std::make_unique<TFactory::TImpl>()){}
 TFactory::~TFactory(){}
 
 std::unique_ptr<TGraph> TFactory::Create(const std::string& type, std::unique_ptr<arguments>&& args) const
 {
-    return Impl->CreateObject(type, std::move(args));
+    return Impl->Create(type, std::move(args));
 }
